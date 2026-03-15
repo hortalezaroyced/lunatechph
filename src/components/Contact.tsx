@@ -1,181 +1,308 @@
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import { useState } from 'react';
+import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import emailjs from "@emailjs/browser";
 
 export default function Contact() {
+
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e:any) => {
+
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message! We will get back to you soon.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+
+    if (!formData.name || !formData.email || !formData.message) {
+      alert("Please complete all fields.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          time: new Date().toLocaleString(),
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      setSuccess(true);
+
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+      });
+
+      setTimeout(() => {
+        setSuccess(false);
+      }, 5000);
+
+    } catch (error) {
+
+      console.error("EmailJS Error:", error);
+      alert("Failed to send message. Please try again.");
+
+    }
+
+    setLoading(false);
+
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
+  const handleChange = (e:any) => {
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
+
   };
 
+
   return (
-    <section id="contact" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Get In Touch
+
+    <section
+      id="contact"
+      className="relative py-32 bg-white overflow-hidden"
+    >
+
+      {/* Background glow */}
+
+      <motion.div
+        animate={{ y:[0,-40,0] }}
+        transition={{ duration:18, repeat:Infinity }}
+        className="absolute w-[700px] h-[700px] bg-blue-200 blur-[180px] opacity-20 left-[-200px] bottom-[-200px]"
+      />
+
+      <div className="max-w-5xl mx-auto px-6 relative">
+
+
+        {/* Heading */}
+
+        <motion.div
+          initial={{ opacity:0, y:40 }}
+          whileInView={{ opacity:1, y:0 }}
+          transition={{ duration:0.8 }}
+          viewport={{ once:true }}
+        >
+
+          <h2 className="text-6xl md:text-7xl font-semibold tracking-tight mb-8">
+            Start a Project
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Ready to start your project? Contact us today and let's discuss how we can help your business grow
+
+          <p className="text-xl text-gray-500 max-w-2xl mb-20">
+            Tell us about your project and how LunaTech can help bring your
+            digital ideas to life.
           </p>
-        </div>
 
-        <div className="grid md:grid-cols-2 gap-12">
-          <div>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="Your name"
-                />
-              </div>
+        </motion.div>
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="your.email@example.com"
-                />
-              </div>
 
-              <div>
-                <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="How can we help?"
-                />
-              </div>
+        {/* Success Message */}
 
-              <div>
-                <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows={6}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-                  placeholder="Tell us about your project..."
-                />
-              </div>
+        {success && (
 
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+          <motion.div
+            initial={{ opacity:0, y:10 }}
+            animate={{ opacity:1, y:0 }}
+            className="mb-12 p-6 rounded-xl bg-green-50 border border-green-200 text-green-700"
+          >
+
+            ✓ Message sent successfully!  
+            Our team will contact you shortly.
+
+          </motion.div>
+
+        )}
+
+
+        {/* Contact Form */}
+
+        <motion.form
+          onSubmit={handleSubmit}
+          className="space-y-12 mb-24"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once:true }}
+          variants={{
+            hidden:{opacity:0},
+            show:{
+              opacity:1,
+              transition:{staggerChildren:0.15}
+            }
+          }}
+        >
+
+          {/* Name */}
+
+          <motion.div
+            variants={{
+              hidden:{opacity:0,y:30},
+              show:{opacity:1,y:0}
+            }}
+          >
+
+            <input
+              type="text"
+              name="name"
+              placeholder="Your Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full border-b border-gray-300 py-4 text-lg focus:outline-none focus:border-black transition"
+            />
+
+          </motion.div>
+
+
+          {/* Email */}
+
+          <motion.div
+            variants={{
+              hidden:{opacity:0,y:30},
+              show:{opacity:1,y:0}
+            }}
+          >
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full border-b border-gray-300 py-4 text-lg focus:outline-none focus:border-black transition"
+            />
+
+          </motion.div>
+
+
+          {/* Message */}
+
+          <motion.div
+            variants={{
+              hidden:{opacity:0,y:30},
+              show:{opacity:1,y:0}
+            }}
+          >
+
+            <textarea
+              name="message"
+              placeholder="Tell us about your project"
+              rows={4}
+              value={formData.message}
+              onChange={handleChange}
+              required
+              className="w-full border-b border-gray-300 py-4 text-lg resize-none focus:outline-none focus:border-black transition"
+            />
+
+          </motion.div>
+
+
+          {/* Submit Button */}
+
+          <motion.button
+            type="submit"
+            whileHover={{ x:6 }}
+            whileTap={{ scale:0.96 }}
+            disabled={loading}
+            className="flex items-center gap-2 text-lg font-semibold"
+          >
+
+            {loading ? (
+
+              <span className="animate-pulse">
+                Sending...
+              </span>
+
+            ) : (
+
+              <>
+                Send Message
+                <Send size={18}/>
+              </>
+
+            )}
+
+          </motion.button>
+
+        </motion.form>
+
+
+        {/* Contact Information */}
+
+        <div className="grid md:grid-cols-3 gap-12 text-gray-600">
+
+          {[
+
+            {
+              icon: Mail,
+              title: "Email",
+              value: "info@lunatechph.com",
+            },
+
+            {
+              icon: Phone,
+              title: "Phone",
+              value: "+63 912 345 6789",
+            },
+
+            {
+              icon: MapPin,
+              title: "Location",
+              value: "Makati City, Philippines",
+            },
+
+          ].map((item, index) => {
+
+            const Icon = item.icon;
+
+            return (
+
+              <motion.div
+                key={index}
+                initial={{ opacity:0, y:30 }}
+                whileInView={{ opacity:1, y:0 }}
+                transition={{ delay:index * 0.15 }}
+                viewport={{ once:true }}
+                whileHover={{ y:-6 }}
+                className="group"
               >
-                <span>Send Message</span>
-                <Send size={20} />
-              </button>
-            </form>
-          </div>
 
-          <div className="space-y-8">
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-8 text-white">
-              <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
+                <Icon className="mb-4 text-gray-900 group-hover:text-blue-600 transition"/>
 
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-white/20 rounded-lg p-3">
-                    <Mail size={24} />
-                  </div>
-                  <div>
-                    <div className="font-semibold mb-1">Email</div>
-                    <a href="mailto:info@lunatechph.com" className="hover:underline">
-                      info@lunatechph.com
-                    </a>
-                  </div>
-                </div>
+                <p className="font-semibold text-gray-900 mb-1">
+                  {item.title}
+                </p>
 
-                <div className="flex items-start space-x-4">
-                  <div className="bg-white/20 rounded-lg p-3">
-                    <Phone size={24} />
-                  </div>
-                  <div>
-                    <div className="font-semibold mb-1">Phone</div>
-                    <a href="tel:+639123456789" className="hover:underline">
-                      +63 912 345 6789
-                    </a>
-                  </div>
-                </div>
+                <p>{item.value}</p>
 
-                <div className="flex items-start space-x-4">
-                  <div className="bg-white/20 rounded-lg p-3">
-                    <MapPin size={24} />
-                  </div>
-                  <div>
-                    <div className="font-semibold mb-1">Address</div>
-                    <p>
-                      Makati City, Metro Manila<br />
-                      Philippines
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </motion.div>
 
-            <div className="bg-gray-50 rounded-2xl p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Business Hours</h3>
-              <div className="space-y-2 text-gray-600">
-                <div className="flex justify-between">
-                  <span>Monday - Friday</span>
-                  <span className="font-semibold">9:00 AM - 6:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Saturday</span>
-                  <span className="font-semibold">10:00 AM - 4:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Sunday</span>
-                  <span className="font-semibold">Closed</span>
-                </div>
-              </div>
-            </div>
-          </div>
+            );
+
+          })}
+
         </div>
+
       </div>
+
     </section>
+
   );
+
 }

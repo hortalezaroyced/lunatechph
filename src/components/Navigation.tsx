@@ -1,77 +1,56 @@
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    element?.scrollIntoView({ behavior: 'smooth' });
-    setIsOpen(false);
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const links = [
+    { id: "home", label: "Home" },
+    { id: "services", label: "Solutions" },
+    { id: "about", label: "Company" },
+    { id: "contact", label: "Contact" }
+  ];
+
   return (
-    <nav className="fixed w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <span className="text-2xl font-bold text-blue-600">Luna Tech PH</span>
-          </div>
+    <motion.nav
+      initial={{ y: -60 }}
+      animate={{ y: 0 }}
+      className="fixed w-full z-50 backdrop-blur-xl bg-white/60 border-b border-gray-200/40"
+    >
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-20">
 
-          <div className="hidden md:flex space-x-8">
-            <button onClick={() => scrollToSection('home')} className="text-gray-700 hover:text-blue-600 transition-colors">
-              Home
-            </button>
-            <button onClick={() => scrollToSection('services')} className="text-gray-700 hover:text-blue-600 transition-colors">
-              Services
-            </button>
-            <button onClick={() => scrollToSection('about')} className="text-gray-700 hover:text-blue-600 transition-colors">
-              About
-            </button>
-            <button onClick={() => scrollToSection('contact')} className="text-gray-700 hover:text-blue-600 transition-colors">
-              Contact
-            </button>
-          </div>
-
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-gray-700"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+        <div className="flex items-center gap-3">
+          <img src="src/img/luna-tech.png" className="h-10"/>
+          <span className="font-semibold tracking-tight text-gray-900">
+            LunaTech Solutions PH
+          </span>
         </div>
+
+        <div className="hidden md:flex gap-8 text-sm text-gray-700">
+          {links.map(link => (
+            <button
+              key={link.id}
+              onClick={() => scrollTo(link.id)}
+              className="hover:text-black transition"
+            >
+              {link.label}
+            </button>
+          ))}
+        </div>
+
+        <button
+          className="md:hidden"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X/> : <Menu/>}
+        </button>
+
       </div>
-
-      {isOpen && (
-        <div className="md:hidden bg-white border-t">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <button
-              onClick={() => scrollToSection('home')}
-              className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => scrollToSection('services')}
-              className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md"
-            >
-              Services
-            </button>
-            <button
-              onClick={() => scrollToSection('about')}
-              className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md"
-            >
-              About
-            </button>
-            <button
-              onClick={() => scrollToSection('contact')}
-              className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md"
-            >
-              Contact
-            </button>
-          </div>
-        </div>
-      )}
-    </nav>
+    </motion.nav>
   );
 }

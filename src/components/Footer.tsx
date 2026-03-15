@@ -1,79 +1,108 @@
-import { Facebook, Twitter, Linkedin, Instagram, Mail } from 'lucide-react';
+import { motion } from "framer-motion";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
-          <div className="md:col-span-2">
-            <h3 className="text-2xl font-bold mb-4 text-blue-400">Luna Tech PH</h3>
-            <p className="text-gray-400 mb-4 leading-relaxed">
-              Empowering Filipino businesses with innovative technology solutions.
-              We transform ideas into reality through expertise, dedication, and cutting-edge technology.
-            </p>
-            <div className="flex space-x-4">
-              <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-blue-600 transition-colors">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-blue-600 transition-colors">
-                <Twitter size={20} />
-              </a>
-              <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-blue-600 transition-colors">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="bg-gray-800 p-2 rounded-lg hover:bg-blue-600 transition-colors">
-                <Instagram size={20} />
-              </a>
-            </div>
-          </div>
 
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#home" className="hover:text-blue-400 transition-colors">Home</a>
-              </li>
-              <li>
-                <a href="#services" className="hover:text-blue-400 transition-colors">Services</a>
-              </li>
-              <li>
-                <a href="#about" className="hover:text-blue-400 transition-colors">About</a>
-              </li>
-              <li>
-                <a href="#contact" className="hover:text-blue-400 transition-colors">Contact</a>
-              </li>
-            </ul>
-          </div>
+    <footer className="relative bg-white border-t overflow-hidden">
 
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Services</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li>Web Development</li>
-              <li>Mobile Apps</li>
-              <li>Cloud Solutions</li>
-              <li>E-Commerce</li>
-              <li>Digital Marketing</li>
-              <li>Database Solutions</li>
-            </ul>
-          </div>
-        </div>
+      {/* subtle background glow */}
 
-        <div className="border-t border-gray-800 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              &copy; {currentYear} Luna Tech PH. All rights reserved.
-            </p>
-            <div className="flex items-center space-x-2 text-gray-400 text-sm">
-              <Mail size={16} />
-              <a href="mailto:info@lunatechph.com" className="hover:text-blue-400 transition-colors">
-                info@lunatechph.com
-              </a>
-            </div>
-          </div>
-        </div>
+      <motion.div
+        animate={{ y:[0,-20,0] }}
+        transition={{ duration:16, repeat:Infinity }}
+        className="absolute w-[500px] h-[500px] bg-blue-200 blur-[160px] opacity-20 right-[-150px] bottom-[-200px]"
+      />
+
+      <div className="max-w-6xl mx-auto px-6 py-20 relative">
+
+        {/* Company */}
+
+        <motion.div
+          initial={{ opacity:0, y:20 }}
+          whileInView={{ opacity:1, y:0 }}
+          transition={{ duration:0.6 }}
+          viewport={{ once:true }}
+        >
+
+          <h3 className="text-xl font-semibold mb-4">
+            LunaTech Solutions PH
+          </h3>
+
+          <p className="text-gray-500 max-w-xl mb-12">
+            LunaTech builds scalable digital platforms and cloud
+            infrastructure for modern businesses.
+          </p>
+
+        </motion.div>
+
+
+        {/* Navigation */}
+
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once:true }}
+          variants={{
+            hidden:{opacity:0},
+            show:{
+              opacity:1,
+              transition:{staggerChildren:0.1}
+            }
+          }}
+          className="flex gap-8 text-sm text-gray-600 mb-12"
+        >
+
+          {[
+            {label:"Home", link:"#home"},
+            {label:"Solutions", link:"#services"},
+            {label:"Company", link:"#about"},
+            {label:"Contact", link:"#contact"}
+          ].map((item,i)=>(
+            
+            <motion.a
+              key={i}
+              href={item.link}
+              variants={{
+                hidden:{opacity:0,y:10},
+                show:{opacity:1,y:0}
+              }}
+              whileHover={{ y:-2 }}
+              className="relative group"
+            >
+
+              {item.label}
+
+              {/* hover underline */}
+
+              <span className="absolute left-0 -bottom-1 h-[1px] w-0 bg-black group-hover:w-full transition-all duration-300"/>
+
+            </motion.a>
+
+          ))}
+
+        </motion.div>
+
+
+        {/* Bottom */}
+
+        <motion.div
+          initial={{ opacity:0 }}
+          whileInView={{ opacity:1 }}
+          transition={{ delay:0.3 }}
+          viewport={{ once:true }}
+          className="border-t pt-6 text-sm text-gray-500"
+        >
+
+          © {year} LunaTech Solutions PH
+
+        </motion.div>
+
       </div>
+
     </footer>
+
   );
 }
